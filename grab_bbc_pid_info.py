@@ -5,6 +5,8 @@ import requests
 url = "https://www.bbc.co.uk/programmes/b017prn7"
 url = "https://www.bbc.co.uk/programmes/b0076jd8"
 url = "https://www.bbc.co.uk/programmes/b007jq5n"
+url = "https://www.bbc.co.uk/programmes/m000vjq5"
+url = "https://www.bbc.co.uk/programmes/b007jzhc"
 
 req = requests.get(url)
 soup = bs(req.content, 'html.parser')
@@ -50,6 +52,7 @@ def make_dict(data, soup):
   title, url = get_title(soup)
   _dict = { 'title'      : title,
             'url'        : url,
+            'episode'    : get_episode(soup),
             'synopLong'  : get_long_synop(data), 
             'synopShort' : get_short_synop(data)
           }
@@ -60,11 +63,16 @@ def print_dict(_dict):
   print(_dict['url'])
   print(_dict['synopShort'][0])
   print("Series:")
-  print("Episode:")
+  print(_dict['episode'])
   for i in _dict['synopLong']:
     print(i)
   
-  
+def get_episode(soup):
+  data = soup.find('div', class_="gamma")
+  data = data.find('span')
+  return data.text.strip()
+
 #get_title(soup)
+#get_episode(soup)
 _dict = make_dict(data, soup)
 print_dict(_dict)
