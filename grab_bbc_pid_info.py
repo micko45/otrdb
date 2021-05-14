@@ -14,15 +14,14 @@ class BbcPid:
     self.long_synop = _dict['synopLong']
 
   def print(self):
-    print(self.title)
-    print(self.url)
-    print(self.parent)
-    print(self.episode)
-    print(self.series)
-    print(self.short_synop)
+    print(self.title, "\n", 
+          self.url, "\n",
+          self.parent, "\n",
+          self.episode, "\n",
+          self.series, "\n",
+          self.short_synop, "\n")
     for i in self.long_synop:
       print(i)
-
 
 def get_soup(url):
   req = requests.get(url)
@@ -99,7 +98,9 @@ def print_line_by_line(inputs):
   for i in inputs:
     print(i)
 
-def make_dict(data, soup):
+def make_dict(url_in="https://www.bbc.co.uk/programmes/b0076jd8"):
+  soup = get_soup(url_in)
+  data = soup.find('div', class_="island")
   title, url = get_titleUrl(soup)
   _dict = { 'title'      : title,
             'url'        : url,
@@ -111,23 +112,13 @@ def make_dict(data, soup):
           }
   return _dict
 
-def print_dict(_dict):
-  print(_dict['title'])
-  print(_dict['url'])
-  print(_dict['parent_show'])
-  print(_dict['episode'])
-  print(_dict['series'])
-  print(_dict['synopShort'][0])
-  for i in _dict['synopLong']:
-    print(i)
-
-def main():
-  for l in example_url:
-    soup = get_soup(l)
-    data = soup.find('div', class_="island")
-    _dict = make_dict(data, soup)
-    print_dict(_dict)
-    print("\n\n\n")
+#def main():
+#  for l in example_url:
+#    soup = get_soup(l)
+#    data = soup.find('div', class_="island")
+#    _dict = make_dict(data, soup)
+#    print_dict(_dict)
+#    print("\n\n\n")
 
 #Example urls
 example_url = ["https://www.bbc.co.uk/programmes/b00j1z95",
@@ -148,8 +139,6 @@ example_url = ["https://www.bbc.co.uk/programmes/b00j1z95",
 
 #main()
 
-soup = get_soup("https://www.bbc.co.uk/programmes/b0076jd8")
-data = soup.find('div', class_="island")
-_dict = make_dict(data, soup)
-show = BbcPid(_dict)
+#_dict = make_dict()
+show = BbcPid(make_dict())
 show.print()
