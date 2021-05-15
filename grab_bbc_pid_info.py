@@ -1,10 +1,10 @@
 from bs4 import BeautifulSoup as bs
 import requests
 
-
 class BbcPid:
 
-  def __init__(self, _dict):
+  def __init__(self, _dict ):
+   # title, url = get_titleUrl(soup)
     self.title = _dict['title']
     self.url = _dict['url']
     self.parent = _dict['parent_show']
@@ -14,25 +14,41 @@ class BbcPid:
     self.long_synop = _dict['synopLong']
 
   def print(self):
-    print(self.title, "\n", 
-          self.url, "\n",
-          self.parent, "\n",
-          self.episode, "\n",
-          self.series, "\n",
+    print(self.title, "\n" + 
+          self.url, "\n"+
+          self.parent, "\n"+
+          self.episode, "\n"+
+          self.series, "\n"+
           self.short_synop, "\n")
     for i in self.long_synop:
       print(i)
 
 def get_soup(url):
+  """
+  Create beautiful soup object from url
+  :params url: url
+  :returns: Beautiful Soup
+  """
   req = requests.get(url)
   soup = bs(req.content, 'html.parser')
   return soup
 
 def extract_tag_from_soup(extractFrom, toExtract):
+  """
+  Take a html tag and yeet it from the soup
+  :params extractFrom: soup obj to remove tag from
+  :params toExtract: tag to yeet
+  """
   for s in extractFrom.select(toExtract):
     s.extract()
+  return
 
 def get_titleUrl(soup):
+  """
+  Get title of show
+  :params soup: soup obj
+  :returns: title
+  """
   data = soup.find('div', class_="br-masthead__title")
   link = data.find('a')
   text = link.text
@@ -94,10 +110,6 @@ def get_long_synop(data):
       aboutShowLong.append(pp)
   return aboutShowLong
 
-def print_line_by_line(inputs):
-  for i in inputs:
-    print(i)
-
 def make_dict(url_in="https://www.bbc.co.uk/programmes/b0076jd8"):
   soup = get_soup(url_in)
   data = soup.find('div', class_="island")
@@ -112,13 +124,11 @@ def make_dict(url_in="https://www.bbc.co.uk/programmes/b0076jd8"):
           }
   return _dict
 
-#def main():
-#  for l in example_url:
-#    soup = get_soup(l)
-#    data = soup.find('div', class_="island")
-#    _dict = make_dict(data, soup)
-#    print_dict(_dict)
-#    print("\n\n\n")
+def main():
+  shows =  []
+  for url in example_url[0:1]:
+    shows.append(BbcPid(make_dict(url)))
+    shows[-1].print()
 
 #Example urls
 example_url = ["https://www.bbc.co.uk/programmes/b00j1z95",
@@ -134,11 +144,7 @@ example_url = ["https://www.bbc.co.uk/programmes/b00j1z95",
                "https://www.bbc.co.uk/programmes/b05vjjwn", 
                "https://www.bbc.co.uk/programmes/b00zf648", 
                "https://www.bbc.co.uk/programmes/b03yn6xr" 
+	      ]
 
-              ]
-
-#main()
-
-#_dict = make_dict()
-show = BbcPid(make_dict())
-show.print()
+if __name__ == '__main__':
+  main()
